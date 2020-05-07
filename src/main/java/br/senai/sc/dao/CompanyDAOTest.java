@@ -1,10 +1,13 @@
 package br.senai.sc.dao;
 
 import br.senai.sc.model.Company;
+import br.senai.sc.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+import java.util.List;
 
 public class CompanyDAOTest {
 
@@ -19,7 +22,9 @@ public class CompanyDAOTest {
 //        insertCompany();
 //        alterCompany();
 //        deleteCompany();
-        findCompany();
+//        findCompany();
+//        listCompanyUser();
+        listCompanies();
 
         entityManager.close();
         factory.close();
@@ -71,5 +76,33 @@ public class CompanyDAOTest {
         System.out.println("Dados Retornados:");
         System.out.println("Código Empresa - " + findCompany.getIdCompany());
         System.out.println("Nome Empresa - " + findCompany.getName());
+    }
+
+    public static void listCompanyUser(){
+        entityManager.getTransaction().begin();
+        Company company = entityManager.find(Company.class, 1);
+
+        List<User> usuarios = company.getUsers();
+
+        for(User user : usuarios){
+            System.out.println("-------------------------------");
+            System.out.println(user.getFullName());
+            System.out.println(user.getEmail());
+            System.out.println("-------------------------------");
+        }
+
+        entityManager.getTransaction().commit();
+    }
+
+    private static void listCompanies(){
+
+        Query query = entityManager.createNamedQuery("Company.listAllOrderByName");
+
+        List<Company> companies = query.getResultList();
+
+        for (Company company : companies){
+            System.out.println(company.getName());
+        }
+
     }
 }

@@ -7,6 +7,8 @@ import javax.jws.soap.SOAPBinding;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+import java.util.List;
 
 public class UserDAOTest {
 
@@ -18,10 +20,13 @@ public class UserDAOTest {
         factory = Persistence.createEntityManagerFactory("Jpa_Aula");
         entityManager = factory.createEntityManager();
 
-        insertUser();
+       insertUser();
 //        editUser();
 //        deleteUser();
-        findUser();
+//        findUser();
+//        listAllUserByName();
+//        listAllUserByEmailDesc();
+//        listUserById();
 
         entityManager.close();
         factory.close();
@@ -32,16 +37,28 @@ public class UserDAOTest {
 
         entityManager.getTransaction().begin();
 
-        User newUser = new User();
+        User newUser1 = new User();
 
-        newUser.setFullName("Bispo de Paris");
-        newUser.setEmail("bispodeparis@gmail.com");
-        newUser.setPassword("deparisbispo");
+        newUser1.setFullName("Sebastião Salgado Doce");
+        newUser1.setEmail("sebastiaosalgadodoce@gmail.com");
+        newUser1.setPassword("sebastiaosalgadodoce");
 
-        Company findCompany = entityManager.find(Company.class, 1);
-        newUser.setCompany(findCompany);
+        Company findCompany1 = entityManager.find(Company.class, 1);
+        newUser1.setCompany(findCompany1);
 
-        entityManager.persist(newUser);
+        entityManager.persist(newUser1);
+
+        User newUser2 = new User();
+        newUser2.setFullName("Leão Rolando Pedreira");
+        newUser2.setEmail("leaoroalandopedreira@gmail.com");
+        newUser2.setPassword("leaoroalandopedreira");
+
+        Company findCompany2 = entityManager.find(Company.class, 1);
+        newUser2.setCompany(findCompany2);
+
+        entityManager.persist(newUser2);
+
+
         entityManager.getTransaction().commit();
 
     }
@@ -50,7 +67,7 @@ public class UserDAOTest {
 
         entityManager.getTransaction().begin();
 
-        User newUser = entityManager.find(User.class, 2);
+        User newUser = entityManager.find(User.class, 3);
 
         newUser.setFullName("Inocêncio Coitadinho");
         newUser.setEmail("inocenciocoitadinho@gmail.com");
@@ -82,6 +99,46 @@ public class UserDAOTest {
         System.out.println("Empresa: " + findUser.getCompany().getName());
 
         entityManager.getTransaction().commit();
+    }
+
+    public static void listAllUserByName() {
+
+        Query query = entityManager.createNamedQuery("User.findAllUserOrByName");
+
+        List<User> users = query.getResultList();
+
+        System.out.println("Resultado da Query User.findAllUserOrByName");
+        for (User user : users){
+            System.out.println("-------------------------------------------");
+            System.out.println(user.getFullName());
+            System.out.println(user.getEmail());
+            System.out.println("-------------------------------------------");
+        }
+    }
+
+    public static void listAllUserByEmailDesc() {
+
+        Query query = entityManager.createNamedQuery("User.FindAllUserOrderByEmailDesc");
+
+        List<User> users = query.getResultList();
+
+        System.out.println("Resultado da Query User.FindAllUserOrderByEmailDesc");
+        for (User user : users){
+            System.out.println("-------------------------------------------");
+            System.out.println(user.getEmail());
+            System.out.println(user.getFullName());
+            System.out.println("-------------------------------------------");
+        }
+    }
+
+    public static void listUserById(){
+
+        Query query = entityManager.createNamedQuery("User.findByIdUser");
+        query.setParameter("iduser", 3);
+
+        User user = (User) query.getSingleResult();
+
+        System.out.println(user.getFullName());
     }
 
 }

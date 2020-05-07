@@ -1,9 +1,15 @@
 package br.senai.sc.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
+@NamedQueries({
+        @NamedQuery(name = "User.findAllUserOrByName", query = "SELECT u FROM User u ORDER BY u.fullName"),
+        @NamedQuery(name = "User.FindAllUserOrderByEmailDesc", query = "SELECT u FROM User u ORDER BY u.email DESC"),
+        @NamedQuery(name = "User.findByIdUser", query = "SELECT u FROM User u where u.idUser = :iduser")
+})
 public class User {
 
     @Id
@@ -20,6 +26,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "id_company")
     private Company company;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Phone> phones;
 
     public Integer getIdUser() {
         return idUser;
@@ -59,5 +68,13 @@ public class User {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
     }
 }
